@@ -1,6 +1,6 @@
 {-# LANGUAGE DoAndIfThenElse #-}
 {-# LANGUAGE Rank2Types #-}
-module Data.Machine.IO where
+module System.IO.Machine where
 
 import Control.Monad (when)
 import Control.Monad.IO.Class (liftIO)
