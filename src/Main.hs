@@ -5,16 +5,15 @@ import System.IO (IOMode(WriteMode), stdin, stdout, withBinaryFile)
 
 import qualified Data.ByteString as BS
 
-echoInOut :: MachineT IO k ()
-echoInOut = sinkHandleByLine stdout <~ (sourceHandleByLine stdin :: IOSource ByteString)
+echoInOut :: IODataMode a -> MachineT IO k ()
+echoInOut m = sinkHandle m stdout <~ (sourceHandle m stdin :: IOSource ByteString)
 
--- TODO Don't use `byLine`
-copyFile :: FilePath -> FilePath -> IO ()
-copyFile src dst = withBinaryFile dst WriteMode $ \hDst -> do
-  runMachineT $ sinkHandleByLine hDst <~ (sourceFileByLine src :: IOSource ByteString)
+copyFile :: IODataMode a -> FilePath -> FilePath -> IO ()
+copyFile m src dst = withBinaryFile dst WriteMode $ \hDst -> do
+  runMachineT $ sinkHandle m hDst <~ sourceFile m src
   return ()
 
 main :: IO ()
 main = do
-  runMachineT echoInOut
+  runMachineT $ echoInOut (byLine :: IODataMode ByteString)
   putStrLn "Finished!"
