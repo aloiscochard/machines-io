@@ -9,10 +9,6 @@ import Data.IOData (IOData, hGetLine, hPutStrLn)
 import Data.Machine
 import System.IO (Handle, IOMode(ReadMode), hClose, hIsEOF, openBinaryFile)
 
--- TODO Test coverage
--- TODO Is it correct to use openBinaryFile in sourceFileWith?
--- alternatively, one can just use System.IO.withFile
-
 data IODataMode a = IODataMode (Handle -> IO a) (Handle -> a -> IO ())
 
 type IOSink k = forall a. ProcessT IO k a
@@ -31,22 +27,11 @@ sourceIO acquire release read = MachineT $ do
     x <- read r
     return . Yield x $ sourceIO acquire release read
 
-sourceFile :: IODataMode a -> FilePath -> IOSource a
-sourceFile (IODataMode r _) = sourceFileWith r
-
 sourceHandle :: IODataMode a -> Handle -> IOSource a
 sourceHandle (IODataMode r _) = sourceHandleWith r
 
 sinkHandle :: IOData a => IODataMode a -> Handle -> IOSink a
 sinkHandle (IODataMode _ w) h = repeatedly $ await >>= \x -> liftIO $ w h x
-
-sourceFileWith :: (Handle -> IO a) -> FilePath -> IOSource a
-sourceFileWith f fp = sourceIO acquire release f where
-  acquire = openBinaryFile fp ReadMode
-  release h = do
-    isEOF <- hIsEOF h
-    when isEOF $ hClose h
-    return isEOF
 
 sourceHandleWith :: (Handle -> IO a) -> Handle -> IOSource a
 sourceHandleWith f h = sourceIO (return h) hIsEOF f
