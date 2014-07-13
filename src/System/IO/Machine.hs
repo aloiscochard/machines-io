@@ -1,6 +1,4 @@
-{-# LANGUAGE DoAndIfThenElse #-}
 {-# LANGUAGE Rank2Types #-}
-{-# LANGUAGE KindSignatures #-}
 module System.IO.Machine where
 
 import Control.Applicative ((<$>))
