@@ -57,5 +57,11 @@ sinkHandle (_, w) h = repeatedly $ await >>= liftIO . w h
 sinkHandleWith :: IOData a => (Handle -> a -> IO ()) -> Handle -> SinkIO m a
 sinkHandleWith f h = repeatedly $ await >>= liftIO . f h
 
+filteredIO :: (a -> IO Bool) -> ProcessT IO a a
+filteredIO p = repeatedly $ do
+  i <- await
+  x <- liftIO $ p i
+  if x then yield i else return ()
+
 printer :: Show a => SinkIO m a
 printer = sinkIO $ liftIO . print
