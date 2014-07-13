@@ -12,6 +12,7 @@ import Data.Word (Word8)
 import System.IO (Handle, IOMode(ReadMode), hClose, hIsEOF, openBinaryFile)
 
 import qualified Data.ByteString as BS
+import qualified Data.ByteString.Char8 as BSC8
 
 type DataModeIO m a = MonadIO m => ((Handle -> m a), (Handle -> a -> m ()))
 type SinkIO m k = MonadIO m => forall a. ProcessT m k a
@@ -20,6 +21,9 @@ type SourceIO m a = MonadIO m => forall k. MachineT m k a
 type IODataMode a = ((Handle -> IO a), (Handle -> a -> IO ()))
 type IOSink k = forall a. ProcessT IO k a
 type IOSource a = forall k. MachineT IO k a
+
+byChar :: IODataMode Char
+byChar = (\h -> BSC8.head <$> BSC8.hGet h 1, \h w -> BSC8.hPut h $ BSC8.pack [w])
 
 byWord8 :: IODataMode Word8
 byWord8 = (\h -> BS.head <$> BS.hGet h 1, \h w -> BS.hPut h $ BS.pack [w])
