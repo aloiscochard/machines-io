@@ -3,11 +3,15 @@
 {-# LANGUAGE KindSignatures #-}
 module System.IO.Machine where
 
+import Control.Applicative ((<$>))
 import Control.Monad (when)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.IOData (IOData, hGetLine, hPutStrLn)
 import Data.Machine
+import Data.Word (Word8)
 import System.IO (Handle, IOMode(ReadMode), hClose, hIsEOF, openBinaryFile)
+
+import qualified Data.ByteString as BS
 
 type DataModeIO m a = MonadIO m => ((Handle -> m a), (Handle -> a -> m ()))
 type SinkIO m k = MonadIO m => forall a. ProcessT m k a
@@ -16,6 +20,9 @@ type SourceIO m a = MonadIO m => forall k. MachineT m k a
 type IODataMode a = ((Handle -> IO a), (Handle -> a -> IO ()))
 type IOSink k = forall a. ProcessT IO k a
 type IOSource a = forall k. MachineT IO k a
+
+byWord8 :: IODataMode Word8
+byWord8 = (\h -> BS.head <$> BS.hGet h 1, \h w -> BS.hPut h $ BS.pack [w])
 
 byLine :: IOData a => DataModeIO m a
 byLine = (hGetLine, hPutStrLn)

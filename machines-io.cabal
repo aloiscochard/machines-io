@@ -18,6 +18,7 @@ library
     System.IO.Machine
   build-depends:       
     base >=4.7 && <4.8
+    , bytestring
     , chunked-data
     , machines
     , transformers
