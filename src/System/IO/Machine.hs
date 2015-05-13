@@ -1,13 +1,11 @@
 {-# LANGUAGE Rank2Types #-}
 module System.IO.Machine where
 
-import Control.Applicative ((<$>))
-import Control.Monad (when)
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.IOData (IOData, hGetLine, hPutStrLn)
 import Data.Machine
 import Data.Word (Word8)
-import System.IO (Handle, IOMode(ReadMode), hClose, hIsEOF, openBinaryFile)
+import System.IO (Handle, hIsEOF)
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC8
@@ -36,14 +34,14 @@ sourceHandle :: DataModeIO m a -> Handle -> SourceIO m a
 sourceHandle (r, _) = sourceHandleWith r
 
 sourceIOWith :: m r -> (r -> m Bool) -> (r -> m a) -> SourceIO m a
-sourceIOWith acquire release read = MachineT $ do
+sourceIOWith acquire release read' = MachineT $ do
   r         <- acquire
   released  <- release r
   if released then
     return Stop
   else do
-    x <- read r
-    return . Yield x $ sourceIOWith acquire release read
+    x <- read' r
+    return . Yield x $ sourceIOWith acquire release read'
 
 sourceHandleWith :: (Handle -> m a) -> Handle -> SourceIO m a
 sourceHandleWith f h = sourceIOWith (return h) (liftIO . hIsEOF) f
