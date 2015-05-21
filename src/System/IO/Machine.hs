@@ -1,6 +1,7 @@
 {-# LANGUAGE Rank2Types #-}
 module System.IO.Machine where
 
+import Control.Applicative ((<$>))
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.IOData (IOData, hGetLine, hPutStrLn)
 import Data.Machine
