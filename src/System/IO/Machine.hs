@@ -1,7 +1,10 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE Rank2Types #-}
 module System.IO.Machine where
 
+#if !MIN_VERSION_base(4,8,0)
 import Control.Applicative ((<$>))
+#endif
 import Control.Monad.IO.Class (MonadIO, liftIO)
 import Data.IOData (IOData, hGetLine, hPutStrLn)
 import Data.Machine
