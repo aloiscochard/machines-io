@@ -6,7 +6,7 @@ module System.IO.Machine where
 import Control.Applicative ((<$>))
 #endif
 import Control.Monad.IO.Class (MonadIO, liftIO)
-import Data.IOData (IOData, hGetLine, hPutStrLn)
+import Data.IOData (IOData, hGetChunk, hGetLine, hPut, hPutStrLn)
 import Data.Machine
 import Data.Word (Word8)
 import System.IO (Handle, hIsEOF)
@@ -24,6 +24,12 @@ type IOSource a = forall k. MachineT IO k a
 
 byChar :: IODataMode Char
 byChar = (\h -> BSC8.head <$> BSC8.hGet h 1, \h w -> BSC8.hPut h $ BSC8.pack [w])
+
+byChunk ::  IOData a => IODataMode a
+byChunk = (\h -> hGetChunk h, \h xs -> hPut h xs)
+
+byChunkOf :: Int -> IODataMode BS.ByteString
+byChunkOf n = (\h -> BS.hGet h n, \h xs -> BS.hPut h xs)
 
 byWord8 :: IODataMode Word8
 byWord8 = (\h -> BS.head <$> BS.hGet h 1, \h w -> BS.hPut h $ BS.pack [w])
