@@ -59,10 +59,10 @@ sourceHandleWith f h = sourceIOWith (return h) (liftIO . hIsEOF) f
 sinkIO :: (a -> IO ()) -> SinkIO m a
 sinkIO f = repeatedly $ await >>= liftIO . f
 
-sinkHandle :: IOData a => IODataMode a -> Handle -> SinkIO m a
+sinkHandle :: IODataMode a -> Handle -> SinkIO m a
 sinkHandle (_, w) h = repeatedly $ await >>= liftIO . w h
 
-sinkHandleWith :: IOData a => (Handle -> a -> IO ()) -> Handle -> SinkIO m a
+sinkHandleWith :: (Handle -> a -> IO ()) -> Handle -> SinkIO m a
 sinkHandleWith f h = repeatedly $ await >>= liftIO . f h
 
 filteredIO :: (a -> IO Bool) -> ProcessT IO a a
