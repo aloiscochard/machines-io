@@ -1,5 +1,5 @@
 name:                machines-io
-version:             0.2.0.10
+version:             0.2.0.11
 synopsis:            IO utilities for the machines library
 homepage:            http://github.com/aloiscochard/machines-io
 license:             Apache-2.0
