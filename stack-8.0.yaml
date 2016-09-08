@@ -1,0 +1,10 @@
+resolver: nightly-2016-09-07
+packages:
+- '.'
+extra-deps:
+  - machines-io-0.2.0.12
+
+flags: {}
+extra-package-dbs: []
+nix:
+  packages: [zlib]
